@@ -116,12 +116,20 @@ class Config:
     # Paths
     data_dir: Path = field(default_factory=app_data_dir)
     watched_folders: list[Path] = field(default_factory=list)
+    # Shared deployments may select an explicit database filename. The
+    # historical default remains index.db for local installs and tests.
+    database_filename: str = "index.db"
 
     # Embedder
     embedder_provider: str = "auto"  # "auto" | "voyage" | "local"
     voyage_model: str = "voyage-3"
     voyage_api_key: str | None = None
     local_model: str = "all-MiniLM-L6-v2"
+    # ODS TEI/OpenAI-compatible embedding service. The standalone ODS
+    # deployment uses this instead of downloading a second local model.
+    ods_embedding_url: str = "http://127.0.0.1:8090/v1"
+    ods_embedding_model: str = "BAAI/bge-base-en-v1.5"
+    ods_embedding_dimension: int = 768
 
     # Indexing
     chunk_size: int = 800
@@ -370,7 +378,7 @@ class Config:
 
     @property
     def db_path(self) -> Path:
-        return self.data_dir / "index.db"
+        return self.data_dir / self.database_filename
 
     @property
     def config_path(self) -> Path:
@@ -397,6 +405,9 @@ watched_folders = []
 embedder_provider = "auto"
 voyage_model = "voyage-3"
 local_model = "all-MiniLM-L6-v2"
+ods_embedding_url = "http://127.0.0.1:8090/v1"
+ods_embedding_model = "BAAI/bge-base-en-v1.5"
+ods_embedding_dimension = 768
 
 # Chunking
 chunk_size = 800
@@ -510,6 +521,12 @@ def load_config(path: Path | None = None) -> Config:
             cfg.voyage_model = data["voyage_model"]
         if "local_model" in data:
             cfg.local_model = data["local_model"]
+        if "ods_embedding_url" in data:
+            cfg.ods_embedding_url = str(data["ods_embedding_url"])
+        if "ods_embedding_model" in data:
+            cfg.ods_embedding_model = str(data["ods_embedding_model"])
+        if "ods_embedding_dimension" in data:
+            cfg.ods_embedding_dimension = int(data["ods_embedding_dimension"])
         if "chunk_size" in data:
             cfg.chunk_size = int(data["chunk_size"])
         if "chunk_overlap" in data:
@@ -608,6 +625,10 @@ def load_config(path: Path | None = None) -> Config:
             cfg.obsidian_vaults = tuple(data["obsidian_vaults"])
         if "imessage_db_path" in data:
             cfg.imessage_db_path = str(data["imessage_db_path"])
+        if "database_filename" in data:
+            value = str(data["database_filename"]).strip()
+            if value and Path(value).name == value:
+                cfg.database_filename = value
         # Round 21 fix (audit-found gap A-config) — load the round-19
         # / round-20 EA-shaped fields. Without these blocks the user
         # could set them in config.toml and it would be a silent
