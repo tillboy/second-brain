@@ -105,6 +105,9 @@ def app_data_dir() -> Path:
     first write, so the directory still gets created when actually
     needed.
     """
+    override = os.environ.get("SECONDBRAIN_DATA_DIR") or os.environ.get("SB_DATA_DIR")
+    if override:
+        return Path(override).expanduser()
     p = user_data_path(APP_NAME, appauthor=False, ensure_exists=False)
     return Path(p)
 

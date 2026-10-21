@@ -23,6 +23,17 @@ def test_default_toml_parses(tmp_path, monkeypatch):
     assert cfg.daily_budget_cents_voyage >= 0
 
 
+def test_environment_data_dir_and_database_filename(monkeypatch, tmp_path):
+    monkeypatch.setenv("SECONDBRAIN_DATA_DIR", str(tmp_path / "cortex"))
+    (tmp_path / "cortex").mkdir()
+    (tmp_path / "cortex" / "config.toml").write_text(
+        'database_filename = "brain.db"\n', encoding="utf-8"
+    )
+    cfg = load_config()
+    assert cfg.data_dir == tmp_path / "cortex"
+    assert cfg.db_path == tmp_path / "cortex" / "brain.db"
+
+
 def test_validate_chunk_overlap_must_be_smaller():
     cfg = Config()
     cfg.chunk_size = 100
