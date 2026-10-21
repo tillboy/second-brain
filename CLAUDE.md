@@ -8,9 +8,25 @@
 ## What this is
 
 A personal-knowledge-base CLI + dashboard + MCP server. Single user
-(the owner), local SQLite + sqlite-vec. The user runs it on their
-laptop with watchpaths pointed at Documents / Downloads / notes
-folders + connector accounts (Gmail, Calendar, Oura, Canvas, etc).
+(the owner), local SQLite + sqlite-vec. It runs on the owner's host —
+currently the Windows 11 desktop documented in HOST-ENVIRONMENT.md —
+with watchpaths pointed at Documents / Downloads / notes folders plus
+connector accounts (Gmail, Calendar, Oura, Canvas, etc).
+
+## Host environment
+
+The host, its ODS stack, and the tailnet/LAN access paths are documented in
+**HOST-ENVIRONMENT.md**. The parts that matter when working in this repo:
+
+- It lives on a Windows 11 box (`DESKTOP-NQH179T`) that also runs Docker Desktop +
+  WSL2 (`Ubuntu-26.04`) and the ODS stack. The previous `PVE02` Proxmox host is
+  retired; there is no longer a separate hypervisor in the path.
+- Tests and lint run through the repo's Windows venv: `.venv/Scripts/python.exe`.
+- ODS publishes **only** `ods-proxy` on the LAN; every other service stays loopback
+  on purpose. Do not rebind services to `0.0.0.0` to make them reachable — use the
+  tailnet path (`HOST-ENVIRONMENT.md` section 4) instead.
+- As shipped, the dashboard (`127.0.0.1:8765`) and the MCP server (stdio) are not
+  reachable off-host.
 
 ## Source layout
 

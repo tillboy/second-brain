@@ -34,6 +34,7 @@ from ._google_oauth import (
     ScopeMissing,
     authorized_session,
     is_authorized,
+    profile_config,
 )
 
 log = logging.getLogger(__name__)
@@ -68,11 +69,11 @@ class GoogleDriveConnector:
     name = "google_drive"
 
     def is_enabled(self, cfg: Config) -> bool:
-        return is_authorized(cfg, GOOGLE_DRIVE_SCOPES)
+        return is_authorized(profile_config(cfg, "drive"), GOOGLE_DRIVE_SCOPES)
 
     def fetch(self, cfg: Config) -> Iterator[ConnectorDocument]:
         try:
-            s = authorized_session(cfg, GOOGLE_DRIVE_SCOPES)
+            s = authorized_session(profile_config(cfg, "drive"), GOOGLE_DRIVE_SCOPES)
         except ScopeMissing as e:
             log.warning(
                 "Drive: %s. Re-run `secondbrain auth google` to grant the missing scope.",

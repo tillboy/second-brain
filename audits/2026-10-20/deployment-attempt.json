@@ -1,0 +1,57 @@
+{
+  "observed_at": "2026-10-21T00:02:00Z",
+  "backup_restore": "passed for brain.db and index.db",
+  "image_patch_and_build": "passed through package installation and image export start",
+  "deployment": "completed",
+  "blocker": null,
+  "docker_log_evidence": "WSL bootstrap initially failed because /dev/sde was already in use; the data VHD was verified read-only, Docker's system distro was recreated, and the engine recovered.",
+  "live_services_restarted": true,
+  "live_databases_overwritten": false,
+  "docker_repair": {
+    "data_vhd_backup": "docker_data.vhdx.pre-repair",
+    "system_vhd_backup": "docker_main_ext4.vhdx.pre-repair",
+    "system_distro_recreated": true,
+    "engine_version": "29.8.2",
+    "containers_healthy": [
+      "secondbrain-cortex",
+      "secondbrain-dashboard"
+    ]
+  },
+  "acceptance": {
+    "local_healthz": 200,
+    "tailnet_mobile": 200,
+    "tailnet_routes": {
+      "/cortex/": 200,
+      "/cortex/search": 200,
+      "/cortex/entities": 200,
+      "/cortex/folders": 200,
+      "/cortex/health": 200,
+      "/cortex/manifest.webmanifest": 200,
+      "/cortex/service-worker.js": 200
+    },
+    "mcp_memory_write_read": "passed",
+    "cortex_status": {
+      "files": 12,
+      "chunks": 73
+    },
+    "openwork_mcp": {
+      "workspace": "OpenWork Chat",
+      "workspace_id": "ws_746e31504776",
+      "registration": "passed via authenticated OpenWork local server POST /workspace/{id}/mcp",
+      "config_source": "config.remote",
+      "status": "connected after engine reload",
+      "tools": [
+        "conductor_check_action",
+        "conductor_ods_status",
+        "conductor_policy",
+        "cortex_search",
+        "cortex_source",
+        "cortex_status",
+        "recall_memories",
+        "remember_fact"
+      ],
+      "memory_write_read": "passed through shared Cortex database",
+      "policy": "memory_write permitted; host/admin actions remain approval-gated"
+    }
+  }
+}

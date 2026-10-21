@@ -1,0 +1,246 @@
+{
+  "observed_at": "2026-10-20T22:25:31.775209+00:00",
+  "databases": [
+    {
+      "path": "D:\\source\\projects\\ods-conductor\\data\\cortex\\brain.db",
+      "exists": true,
+      "counts": {
+        "files": 12,
+        "chunks": 73,
+        "chat_memories": 0,
+        "chat_conversations": 0,
+        "chat_messages": 0
+      },
+      "latest_indexed_at": 1792281302.0634508,
+      "memory_tables": [
+        "chat_conversations",
+        "chat_memories",
+        "chat_messages"
+      ],
+      "scheduler_tables": []
+    },
+    {
+      "path": "D:\\source\\projects\\ods-conductor\\data\\cortex\\index.db",
+      "exists": true,
+      "counts": {
+        "files": 1,
+        "chunks": 1,
+        "chat_memories": 0,
+        "chat_conversations": 0,
+        "chat_messages": 0,
+        "scheduler_runs": 20064
+      },
+      "latest_indexed_at": 1792281772.8725958,
+      "memory_tables": [
+        "chat_conversations",
+        "chat_memories",
+        "chat_messages"
+      ],
+      "scheduler_tables": [
+        "scheduler_runs"
+      ],
+      "scheduler_columns": [
+        "id",
+        "job_name",
+        "started_at",
+        "finished_at",
+        "success",
+        "summary",
+        "error"
+      ],
+      "scheduler_totals": [
+        [
+          null,
+          2
+        ],
+        [
+          0,
+          4470
+        ],
+        [
+          1,
+          15592
+        ]
+      ],
+      "recent_jobs": [
+        [
+          "ai_audit_trim",
+          1,
+          1792454574.643123
+        ],
+        [
+          "auto_summariser",
+          1,
+          1792533842.1268628
+        ],
+        [
+          "cadence_inference",
+          1,
+          1792281774.8540518
+        ],
+        [
+          "conditional_reminders",
+          1,
+          1792534355.3514502
+        ],
+        [
+          "connector_sync",
+          1,
+          1792533805.4576638
+        ],
+        [
+          "daily_brief",
+          0,
+          1792522802.9033802
+        ],
+        [
+          "daily_digest",
+          0,
+          1792526403.6982367
+        ],
+        [
+          "email_drafts",
+          1,
+          1792533805.446577
+        ],
+        [
+          "email_reply_pairs_index",
+          1,
+          1792533805.5185497
+        ],
+        [
+          "email_triage",
+          1,
+          1792533913.2569191
+        ],
+        [
+          "email_voice_profile",
+          0,
+          1792533805.5254314
+        ],
+        [
+          "eod_wrapup",
+          1,
+          1792519200.8740351
+        ],
+        [
+          "event_briefings",
+          1,
+          1792534543.256019
+        ],
+        [
+          "followup_extractor",
+          1,
+          1792533843.1630714
+        ],
+        [
+          "followups_auto_resolve",
+          1,
+          1792533808.6173732
+        ],
+        [
+          "health_checks",
+          1,
+          1792533805.546601
+        ],
+        [
+          "index_snapshot",
+          0,
+          1792533805.4529948
+        ],
+        [
+          "last_contact_refresh",
+          1,
+          1792533808.6128447
+        ],
+        [
+          "meeting_capture",
+          1,
+          1792533808.6077838
+        ],
+        [
+          "meeting_prep_prefetch",
+          1,
+          1792533842.1427646
+        ],
+        [
+          "meeting_thanks",
+          1,
+          1792533805.5331318
+        ],
+        [
+          "notification_detectors",
+          1,
+          1792533808.5800557
+        ],
+        [
+          "oura_sync",
+          0,
+          1792534547.3959813
+        ],
+        [
+          "people_backfill",
+          1,
+          1792519378.0429008
+        ],
+        [
+          "read_queue_summariser",
+          1,
+          1792534543.2607222
+        ],
+        [
+          "standing_threads_detect",
+          1,
+          1792519379.06024
+        ],
+        [
+          "study_card_materialiser",
+          1,
+          1792533842.116962
+        ],
+        [
+          "task_promises",
+          1,
+          1792533805.5413451
+        ],
+        [
+          "tasks_from_transcripts",
+          1,
+          1792533842.1332738
+        ],
+        [
+          "todoist_sync",
+          0,
+          1792533843.1553192
+        ],
+        [
+          "trim_scheduler_runs",
+          1,
+          1792454573.6132414
+        ],
+        [
+          "wal_checkpoint",
+          null,
+          1792534580.9609447
+        ],
+        [
+          "watchlists",
+          1,
+          1792534543.2495255
+        ],
+        [
+          "weekly_review",
+          1,
+          1792533805.4352117
+        ],
+        [
+          "weekly_review_fallback",
+          1,
+          1792281772.7571526
+        ]
+      ]
+    }
+  ],
+  "secondbrain_module": "D:\\source\\projects\\second-brain\\src\\secondbrain\\__init__.py",
+  "conductor_module": "D:\\source\\projects\\ods-conductor\\src\\conductor\\__init__.py"
+}

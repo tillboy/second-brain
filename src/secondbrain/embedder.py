@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import json
 import logging
+import math
 from typing import Protocol, runtime_checkable
+from urllib.parse import urlparse
+from urllib.request import Request, urlopen
 
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -116,6 +120,60 @@ class LocalEmbedder:
         return self.embed_documents([text])[0]
 
 
+class ODSEmbedder:
+    """Use the embedding service already managed by the ODS stack.
+
+    The endpoint is OpenAI-compatible (`/v1/embeddings`) inside the ODS
+    Docker network. A TEI-compatible `/embed` endpoint is also accepted for
+    host-side development. No model is downloaded by this adapter.
+    """
+
+    def __init__(self, url: str, model: str, dimension: int):
+        parsed = urlparse(url)
+        if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+            raise ValueError("ODS embedding URL must be an absolute HTTP(S) URL")
+        self.url = url.rstrip("/")
+        self.model = model
+        self.name = model
+        self.dim = dimension
+
+    def _request(self, texts: list[str]) -> list[list[float]]:
+        if not texts:
+            return []
+        if self.url.endswith("/v1"):
+            endpoint = self.url + "/embeddings"
+            payload = {"input": texts, "model": self.model}
+        else:
+            endpoint = self.url + "/embed"
+            payload = {"inputs": texts, "truncate": True}
+        request = Request(
+            endpoint,
+            json.dumps(payload).encode("utf-8"),
+            {"Content-Type": "application/json"},
+        )
+        with urlopen(request, timeout=120) as response:
+            body = json.load(response)
+        if self.url.endswith("/v1"):
+            rows = [row["embedding"] for row in sorted(body["data"], key=lambda r: r["index"])]
+        else:
+            rows = body
+        if len(rows) != len(texts) or any(
+            len(row) != self.dim or not all(math.isfinite(value) for value in row)
+            for row in rows
+        ):
+            raise ValueError("ODS embedding response has invalid count, dimension, or values")
+        return rows
+
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
+        output = []
+        for start in range(0, len(texts), 16):
+            output.extend(self._request(texts[start:start + 16]))
+        return output
+
+    def embed_query(self, text: str) -> list[float]:
+        return self._request([text])[0]
+
+
 def make_embedder(cfg: Config) -> Embedder:
     """Pick an embedder based on config and available credentials."""
     provider = cfg.embedder_provider
@@ -132,5 +190,12 @@ def make_embedder(cfg: Config) -> Embedder:
 
     if provider == "local":
         return LocalEmbedder(cfg.local_model)
+
+    if provider == "ods":
+        return ODSEmbedder(
+            cfg.ods_embedding_url,
+            cfg.ods_embedding_model,
+            cfg.ods_embedding_dimension,
+        )
 
     raise ValueError(f"Unknown embedder_provider: {provider}")

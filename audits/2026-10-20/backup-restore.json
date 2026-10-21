@@ -1,0 +1,9 @@
+{
+  "observed_at": "2026-10-20T22:29:57.729000Z",
+  "destination": "D:\\source\\projects\\ods-conductor\\data\\cortex\\recovery-drills\\online-20261020T222957Z",
+  "databases": {
+    "brain.db": {"integrity": "ok", "reopened_integrity": "ok", "files": 12, "chunks": 73, "chat_memories": 0},
+    "index.db": {"integrity": "ok", "reopened_integrity": "ok", "files": 1, "chunks": 1, "scheduler_runs": 20108, "chat_memories": 0}
+  },
+  "live_databases_modified": false
+}

@@ -23,6 +23,16 @@ The codebase is one Python package (`secondbrain/`) that ships with:
 
 Local-first by design. The only outbound calls are to Anthropic (chat / drafting / summarization) and Voyage (embeddings), both rate-limited via per-feature daily caps. Nothing else leaves your machine.
 
+## Where this runs
+
+`secondbrain` is local-first: the dashboard binds `127.0.0.1:8765` and the MCP
+server is stdio-only, so it needs no network plumbing of its own. It does share a
+machine with the **ODS** stack (Docker Desktop + WSL2 + `ods-proxy` + Tailscale on
+Windows 11), which is what makes its surfaces reachable from other devices.
+
+See **[HOST-ENVIRONMENT.md](HOST-ENVIRONMENT.md)** for the host, the ODS services
+and ports, both access paths (tailnet and LAN), and the known local caveats.
+
 ---
 
 ## Install
@@ -309,7 +319,7 @@ By default:
 ```
                       ┌──────────────────────────┐
                       │  ~/.secondbrain/         │
-                      │     index.db (SQLite)    │
+                      │     brain.db (ODS deployment) │
                       │     config.toml          │
                       │     daemon.log           │
                       │     spend.jsonl          │
@@ -341,6 +351,10 @@ By default:
    │ (stdio)  │         │ Notion, ...  │         │                 │
    └──────────┘         └──────────────┘         └─────────────────┘
 ```
+
+The source package still supports its historical `index.db` default for local
+development. The deployed ODS stack uses `brain.db`; the legacy deployment
+copy is retained only for the R1 reconciliation and rollback review.
 
 SQLite (with `sqlite-vec` for vector search and FTS5 for keyword search) is the only persistence. WAL mode for concurrency. The whole DB is a single file you can back up.
 

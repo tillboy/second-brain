@@ -23,13 +23,14 @@ from __future__ import annotations
 import http.server
 import json
 import logging
+import os
 import re
 import socket
 import threading
 import time
 import urllib.parse
 import webbrowser
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 
 import requests
@@ -96,6 +97,19 @@ def _client_secret_path(cfg: Config) -> Path:
 
 def _credentials_path(cfg: Config) -> Path:
     return cfg.data_dir / "google_credentials.json"
+
+
+def profile_config(cfg: Config, profile: str) -> Config:
+    """Use an optional source-scoped directory for Google OAuth state.
+
+    The default remains ``cfg.data_dir`` for backwards compatibility. Only
+    OAuth files move; the index and daemon state remain in the main directory.
+    """
+    key = f"SECONDBRAIN_GOOGLE_{profile.upper()}_DATA_DIR"
+    directory = os.environ.get(key, "").strip()
+    if not directory:
+        return cfg
+    return replace(cfg, data_dir=Path(directory).expanduser())
 
 
 def _load_client_secret(cfg: Config) -> dict:

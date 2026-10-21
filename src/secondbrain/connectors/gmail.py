@@ -33,6 +33,7 @@ from ._google_oauth import (
     ScopeMissing,
     authorized_session,
     is_authorized,
+    profile_config,
 )
 
 log = logging.getLogger(__name__)
@@ -132,11 +133,11 @@ class GmailConnector:
 
     def is_enabled(self, cfg: Config) -> bool:
         # Enabled if a Google client_secret + valid creds exist for Gmail scope.
-        return is_authorized(cfg, GMAIL_SCOPES)
+        return is_authorized(profile_config(cfg, "gmail"), GMAIL_SCOPES)
 
     def fetch(self, cfg: Config) -> Iterator[ConnectorDocument]:
         try:
-            s = authorized_session(cfg, GMAIL_SCOPES)
+            s = authorized_session(profile_config(cfg, "gmail"), GMAIL_SCOPES)
         except ScopeMissing as e:
             log.warning(
                 "Gmail: %s. Re-run `secondbrain auth google` to grant the missing scope.",

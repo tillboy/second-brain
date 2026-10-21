@@ -40,3 +40,8 @@ config.local.toml
 # Model caches
 .cache/
 models/
+# Local deployment evidence and recovery artifacts
+.freebuff/
+ .Destination}}{{end}}
+audits/**/__pycache__/
+audits/**/*.vhdx.pre-repair
