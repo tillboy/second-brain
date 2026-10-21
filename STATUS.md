@@ -23,6 +23,8 @@ complete.
   rollback copies were taken, stale sidecars were repaired, and both databases
   then passed integrity checks. A staged Linux-backed Docker volume also passed
   online SQLite backup and restore checks; live services now use that volume.
+- A post-cutover backup was restored into an isolated volume and matched live
+  aggregate counts: `brain.db` 12 files/73 chunks and legacy `index.db` 1/1.
 - Hermes bridge retry `t_1fa3a1ea` reached review with stored tool receipts;
   bootstrap-mode restrictions still require human review.
 - OpenWork authenticated MCP registration and shared-memory acceptance: passed
@@ -36,7 +38,8 @@ complete.
 
 1. Reconcile the legacy `index.db` with `brain.db`, prove one
    authoritative store, and retire any stale dashboard snapshot path.
-2. Complete online backup/restore coverage for the authoritative store,
+2. Complete backup/restore coverage for the authoritative store, protected
+   configuration, worker state, and Hermes task state,
    configuration, worker state and Hermes task state.
 3. Finish worker freshness, retrieval parity, restart, rollback and failure
    detection checks.
