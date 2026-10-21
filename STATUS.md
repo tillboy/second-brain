@@ -36,8 +36,9 @@ delivery gates are tracked in the ODS Conductor `PLAN.md` and acceptance matrix.
   preserved pending R2 retention and restore decisions.
 - A supported one-shot synthetic ingest/update reached both MCP search and the
   dashboard without restart. The Docker Desktop bind-mounted watcher did not
-  observe a host-created file during the short acceptance window; periodic
-  freshness or an event bridge remains open.
+  observe a host-created file during the short acceptance window. The daemon
+  now includes a five-minute `watched_folder_rescan` fallback; live deployment
+  and a post-rollout host-created-file check remain open.
 - Hermes bridge retry `t_1fa3a1ea` reached review with stored tool receipts;
   bootstrap-mode restrictions still require human review.
 - OpenWork authenticated MCP registration and shared-memory acceptance: passed
