@@ -15,7 +15,7 @@ complete.
 
 - Shared Conductor Cortex database: `brain.db` in the Linux-backed Docker
   volume `ods-cortex-data`.
-- Cortex status: 12 indexed files and 73 chunks in the latest live response.
+- Cortex status: 13 indexed files and 74 chunks after legacy reconciliation.
 - Hermes MCP: `ODS Conductor` enabled with 8 selected tools.
 - Hermes profiles: `conductor-pm` and `conductor-sysop`.
 - Fresh policy call, synthetic memory write and recall: passed.
@@ -24,7 +24,10 @@ complete.
   then passed integrity checks. A staged Linux-backed Docker volume also passed
   online SQLite backup and restore checks; live services now use that volume.
 - A post-cutover backup was restored into an isolated volume and matched live
-  aggregate counts: `brain.db` 12 files/73 chunks and legacy `index.db` 1/1.
+  aggregate counts: `brain.db` 13 files/74 chunks and legacy `index.db` 1/1.
+- The one non-overlapping legacy review record was imported through the
+  supported indexer into `brain.db` with a documented ID mapping; the legacy
+  store remains preserved.
 - Hermes bridge retry `t_1fa3a1ea` reached review with stored tool receipts;
   bootstrap-mode restrictions still require human review.
 - OpenWork authenticated MCP registration and shared-memory acceptance: passed
@@ -36,8 +39,9 @@ complete.
 
 ## Remaining delivery gates
 
-1. Reconcile the legacy `index.db` with `brain.db`, prove one
-   authoritative store, and retire any stale dashboard snapshot path.
+1. Reconcile scheduler ownership/state and prove one authoritative record set;
+   the legacy review record import is complete, but the legacy store remains
+   preserved pending rollback and freshness acceptance.
 2. Complete backup/restore coverage for the authoritative store, protected
    configuration, worker state, and Hermes task state,
    configuration, worker state and Hermes task state.
