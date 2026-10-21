@@ -30,6 +30,9 @@ complete.
 - The one non-overlapping legacy review record was imported through the
   supported indexer into `brain.db` with a documented ID mapping; the legacy
   store remains preserved.
+- The live worker now writes scheduler history to `brain.db` (6,016 runs); the
+  legacy store retains 20,121 historical scheduler rows that are intentionally
+  preserved pending R2 retention and restore decisions.
 - Hermes bridge retry `t_1fa3a1ea` reached review with stored tool receipts;
   bootstrap-mode restrictions still require human review.
 - OpenWork authenticated MCP registration and shared-memory acceptance: passed
