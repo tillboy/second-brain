@@ -9,7 +9,8 @@ The ODS Docker deployment is live on the Windows 11 host. `secondbrain-cortex`,
 Cortex is running in Docker with the ODS embedding service, and Hermes is
 connected to the internal Conductor MCP. The project is integrated enough for
 bounded policy, retrieval and memory tests, but the full delivery plan is not
-complete.
+The deployment is operational but the project is not complete. The remaining
+delivery gates are tracked in the ODS Conductor `PLAN.md` and acceptance matrix.
 
 ## Verified now
 
@@ -33,6 +34,10 @@ complete.
 - The live worker now writes scheduler history to `brain.db` (6,016 runs); the
   legacy store retains 20,121 historical scheduler rows that are intentionally
   preserved pending R2 retention and restore decisions.
+- A supported one-shot synthetic ingest/update reached both MCP search and the
+  dashboard without restart. The Docker Desktop bind-mounted watcher did not
+  observe a host-created file during the short acceptance window; periodic
+  freshness or an event bridge remains open.
 - Hermes bridge retry `t_1fa3a1ea` reached review with stored tool receipts;
   bootstrap-mode restrictions still require human review.
 - OpenWork authenticated MCP registration and shared-memory acceptance: passed
