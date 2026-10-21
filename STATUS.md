@@ -18,7 +18,9 @@ complete.
 - Cortex status: 13 indexed files and 74 chunks after legacy reconciliation.
 - Hermes MCP: `ODS Conductor` enabled with 8 selected tools.
 - Hermes profiles: `conductor-pm` and `conductor-sysop`.
-- Fresh policy call, synthetic memory write and recall: passed.
+- Fresh policy call, synthetic memory write and recall: passed; the corrected
+  stdio acceptance also reports `index_status` at 13 files/74 chunks instead
+  of silently opening an empty default database.
 - A live Windows bind-mounted SQLite `disk I/O error` was reproduced, raw
   rollback copies were taken, stale sidecars were repaired, and both databases
   then passed integrity checks. A staged Linux-backed Docker volume also passed
