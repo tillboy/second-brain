@@ -574,3 +574,16 @@ def test_daemon_registers_round10_jobs(fresh_db, tmp_cfg):
     names = set(sched.names())
     assert "ai_audit_trim" in names
     assert "health_checks" in names
+
+
+def test_daemon_registers_watched_folder_rescan_when_folders_are_live(
+    fresh_db, tmp_cfg, tmp_path,
+):
+    from secondbrain.daemon import _build_daemon_scheduler
+
+    folder = tmp_path / "watched"
+    folder.mkdir()
+    sched = _build_daemon_scheduler(
+        tmp_cfg, fresh_db, embedder=None, reranker=None, folders=[folder],
+    )
+    assert "watched_folder_rescan" in set(sched.names())

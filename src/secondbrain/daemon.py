@@ -54,6 +54,11 @@ _WAL_CHECKPOINT_INTERVAL_SEC = 600
 # of their requested cadence without busy-looping.
 _WATCHLIST_POLL_INTERVAL_SEC = 60
 
+# Docker Desktop/WSL file notifications can be lost for Windows bind mounts.
+# Keep the event watcher for low latency, but periodically walk watched
+# folders so BAU ingestion does not depend on that notification bridge.
+_WATCHED_FOLDER_RESCAN_INTERVAL_SEC = 300
+
 
 def _make_log_handlers(log_path: Path) -> list[logging.Handler]:
     """Rotate the daemon log so a long-running install doesn't accumulate
@@ -218,7 +223,13 @@ def run_daemon(cfg: Config, log_path: Path | None = None) -> None:
         log.warning("reranker init failed; watchlists will run without rerank: %s", e)
         reranker = None
 
-    sched = _build_daemon_scheduler(cfg, conn, embedder, reranker)
+    sched = _build_daemon_scheduler(
+        cfg, conn, embedder, reranker, folders,
+        transcriber=transcriber,
+        ocr_engine=ocr_engine,
+        entity_extractor=entity_extractor,
+        image_embedder=image_embedder,
+    )
     log.info("watcher running. Ctrl-C to stop.")
     log.info("scheduler: %d jobs registered: %s",
              len(sched.names()), ", ".join(sched.names()))
@@ -255,6 +266,11 @@ def run_daemon(cfg: Config, log_path: Path | None = None) -> None:
 
 def _build_daemon_scheduler(
     cfg: Config, conn, embedder, reranker,
+    folders: list[Path] | None = None,
+    transcriber=None,
+    ocr_engine=None,
+    entity_extractor=None,
+    image_embedder=None,
 ) -> Scheduler:
     """Wire every periodic job into one scheduler. Each job's name is
     visible in `secondbrain status`; its schedule encapsulates the
@@ -270,6 +286,9 @@ def _build_daemon_scheduler(
         that fire at most once per cooldown window.
       - ``CooldownSchedule`` for "roughly every N hours" jobs (Oura
         sync, WAL checkpoint, runs trim).
+      - ``IntervalSchedule`` for the watched-folder rescan fallback. The
+        event watcher remains the fast path; this catches missed Windows/WSL
+        notifications.
     """
     sched = Scheduler(conn)
 
@@ -289,6 +308,32 @@ def _build_daemon_scheduler(
         ),
         fn=lambda conn: trim_old_runs(conn, keep_days=14),
     ))
+
+    if folders:
+        def _rescan() -> dict[str, int]:
+            totals: dict[str, int] = {}
+            for folder in folders:
+                if not folder.exists():
+                    log.warning("watched folder disappeared before rescan: %s", folder)
+                    continue
+                counts = index_folder(
+                    conn, embedder, cfg, folder,
+                    transcriber=transcriber,
+                    ocr_engine=ocr_engine,
+                    entity_extractor=entity_extractor,
+                    image_embedder=image_embedder,
+                )
+                for status, count in counts.items():
+                    totals[status] = totals.get(status, 0) + count
+            return totals
+
+        sched.register(Job(
+            name="watched_folder_rescan",
+            schedule=IntervalSchedule(
+                seconds=_WATCHED_FOLDER_RESCAN_INTERVAL_SEC,
+            ),
+            fn=_rescan,
+        ))
 
     # Watchlists — each due watchlist may take several seconds
     # (Claude + tool use). Serial within the scheduler tick.
