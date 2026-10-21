@@ -54,3 +54,15 @@ python -m pytest -x -q -m "not slow"   # second-brain: 1466 passed, 1 skipped
 python -m pytest -q                     # ods-conductor: 42 passed, 2 skipped
 python -m ruff check src tests
 ```
+
+## Hermes orchestration
+
+Hermes is connected to the internal ODS Conductor MCP at `http://ods-conductor-mcp:8000/mcp`. In Hermes, run `hermes mcp list` and confirm `ODS Conductor` is enabled with 8 selected tools. The profiles are `conductor-pm` (planning and evidence) and `conductor-sysop` (read-only operations). Both are restricted to the Conductor tools, require review, and cannot use terminal, browser, filesystem, connectors, or external communication.
+
+The live task board is `conductor-bootstrap`. Inspect it with:
+
+```powershell
+docker exec -u hermes -e HERMES_KANBAN_BOARD=conductor-bootstrap ods-hermes /opt/hermes/.venv/bin/hermes kanban list
+```
+
+The task definitions and constraints are documented in [HERMES-ORCHESTRATION.md](HERMES-ORCHESTRATION.md).
