@@ -13,7 +13,8 @@ complete.
 
 ## Verified now
 
-- Shared Conductor Cortex database: `data/cortex/brain.db`.
+- Shared Conductor Cortex database: `brain.db` in the Linux-backed Docker
+  volume `ods-cortex-data`.
 - Cortex status: 12 indexed files and 73 chunks in the latest live response.
 - Hermes MCP: `ODS Conductor` enabled with 8 selected tools.
 - Hermes profiles: `conductor-pm` and `conductor-sysop`.
@@ -21,7 +22,7 @@ complete.
 - A live Windows bind-mounted SQLite `disk I/O error` was reproduced, raw
   rollback copies were taken, stale sidecars were repaired, and both databases
   then passed integrity checks. A staged Linux-backed Docker volume also passed
-  online SQLite backup and restore checks; live cutover remains open.
+  online SQLite backup and restore checks; live services now use that volume.
 - Hermes bridge retry `t_1fa3a1ea` reached review with stored tool receipts;
   bootstrap-mode restrictions still require human review.
 - OpenWork authenticated MCP registration and shared-memory acceptance: passed
@@ -33,10 +34,9 @@ complete.
 
 ## Remaining delivery gates
 
-1. Reconcile the legacy `data/cortex/index.db` with `brain.db`, prove one
+1. Reconcile the legacy `index.db` with `brain.db`, prove one
    authoritative store, and retire any stale dashboard snapshot path.
-2. Cut over to the staged Linux-backed volume only after updating host backup
-   and acceptance tooling; then complete online backup/restore coverage for the authoritative store,
+2. Complete online backup/restore coverage for the authoritative store,
    configuration, worker state and Hermes task state.
 3. Finish worker freshness, retrieval parity, restart, rollback and failure
    detection checks.
